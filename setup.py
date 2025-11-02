@@ -28,7 +28,7 @@ def main():
 	print("\nChecking for Python:")
 	subprocess.run(['pacman', '-Q', 'python'])
 
-	install_package('libreoffice-fresh')
+	install_package('tree')
 
 if __name__ == "__main__":
 	main()
