@@ -2,7 +2,8 @@
 
 import subprocess
 import time
-
+from pathlib import Path
+import shutil
 
 
 def install_package(package_name):
@@ -23,6 +24,22 @@ def install_aur_package(package_name):
 		print(f"✅ {package_name} installed successfully!")
 	else: 
 		print(f"❌ Failed to install {package_name}")	
+
+def restore_configs():
+	home_dir = Path.home()
+	
+# Copy each file to its actual location
+	for config_file in Path('./configs').iterdir():
+		dest = home_dir / config_file.name
+		
+		# Backup existing file before restoring
+		if dest.exists():
+			backup = dest.with_suffix(dest.suffix + '.backup')
+			shutil.copy2(dest, backup)
+			print(f"Backed up existing {dest.name}")
+		
+		shutil.copy2(config_file, dest)
+		print(f"Restored {config_file.name}")
 
 
 def main():
@@ -65,7 +82,10 @@ def main():
 	else: 
 		print("❌ Installation cancelled")
 
-
+	# Restore dotfiles to new computer
+	print("Dotfiles will now be restored...")
+	time.sleep(3)
+	restore_configs()
 
 
 if __name__ == "__main__":
