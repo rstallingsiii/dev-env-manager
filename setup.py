@@ -5,6 +5,7 @@ import time
 from pathlib import Path
 import shutil
 
+errorLog = Path('errorLog.txt').touch
 
 def install_package(package_name):
 	
@@ -34,12 +35,36 @@ def restore_configs():
 		
 		# Backup existing file before restoring
 		if dest.exists():
-			backup = dest.with_suffix(dest.suffix + '.backup')
-			shutil.copy2(dest, backup)
-			print(f"Backed up existing {dest.name}")
+			try:
+				backup = dest.with_suffix(dest.suffix + '.backup')
+				shutil.copy2(dest, backup)
+				print(f"Backed up existing {dest.name}")
+			except Exception as e:	
+				print(f"❌ Failed to backup {dest.name}: {e}")	
+
 		
-		shutil.copy2(config_file, dest)
-		print(f"Restored {config_file.name}")
+		try: 
+			shutil.copy2(config_file, dest)
+			print(f"✅ Restored {config_file.name}!")
+		except Exception as e:
+			print(f"❌ Failed to restore {config_file.name}: {e}")	
+		
+
+def clone_git(git_Projects):
+	home_dir = Path.home()
+	dest = home_dir / 'git_projects'
+	
+	print(dest)
+
+	# Copy Git Projects
+	for project in git_Projects:
+		try:
+			subprocess.run(['git', 'clone', project, dest])
+			print(f"✅ {project} has been cloned successfully!")	
+		except Exception as e: 
+			print(f"❌ Failed to install {project}: {e}")	
+			
+
 
 
 def main():
@@ -59,13 +84,13 @@ def main():
 	print(f"\nThe following AUR packages will be installed: \n {', '.join(aur_packages)}")
 
 
-	response = input("Continue with installation? (y/n): ")
+	packageResponse = input("Continue with installation? (y/n): ")
 
-	while response.lower() not in ['y','n']: 
-		response = input("Please answer with 'y' for 'yes' or 'n' for 'no'. \nContinue with installation? (y/n): ")
+	while packageResponse.lower() not in ['y','n']: 
+		packageResponse = input("Please answer with 'y' for 'yes' or 'n' for 'no'. \nContinue with installation? (y/n): ")
 	
 		# Install if user confirms 
-	if response.lower() == 'y':
+	if packageResponse.lower() == 'y':
 		print("\nStarting installation...\n")
 		for package in pacman_packages:
 			install_package(package)
@@ -74,7 +99,7 @@ def main():
 		print("❌ Installation cancelled")
 
 	# Install AUR Packages if user confirms 
-	if response.lower() == 'y':
+	if packageResponse.lower() == 'y':
 		print("\nStarting installation...\n")
 		for package in aur_packages:
 			install_package(package)
@@ -83,10 +108,49 @@ def main():
 		print("❌ Installation cancelled")
 
 	# Restore dotfiles to new computer
-	print("Dotfiles will now be restored...")
+	print("Dotfiles will now be restored...\n")
 	time.sleep(3)
-	restore_configs()
 
+	configResponse = input("Continue with installation? (y/n): ")
+
+	while configResponse.lower() not in ['y','n']: 
+		configResponse = input("Please answer with 'y' for 'yes' or 'n' for 'no'. \nContinue with installation? (y/n): ")
+	
+		# Install if user confirms 
+	if configResponse.lower() == 'y':
+		# Clone git projects
+		print("Beginning Restoration Process...\n")
+		time.sleep(3)
+		restore_configs()
+		print("\n✅ All configs have been restored")
+	else: 
+		print("\n❌ Restoration cancelled")
+
+	time.sleep(3)
+
+
+	# Git Projects 
+	git_Projects = ['https://github.com/rstallingsiii/robofriends.git', 'https://github.com/rstallingsiii/Virtual-Assistant.git' , 'https://github.com/rstallingsiii/SpurgeonAi.git', 'https://github.com/rstallingsiii/Todo-List.git' ]
+
+	print(f"\nThe following Git Projects will be installed: \n {', '.join(git_Projects)}")
+
+	gitResponse = input("Continue with installation? (y/n): ")
+
+	while gitResponse.lower() not in ['y','n']: 
+		gitResponse = input("Please answer with 'y' for 'yes' or 'n' for 'no'. \nContinue with installation? (y/n): ")
+	
+		# Install if user confirms 
+	if gitResponse.lower() == 'y':
+		# Clone git projects
+		print("Cloning git projects...\n")
+		time.sleep(3)
+		clone_git(git_Projects)
+		print("\n✅ All packages installed")
+	else: 
+		print("\n❌ Installation cancelled")
+
+
+	
 
 if __name__ == "__main__":
 	main()
