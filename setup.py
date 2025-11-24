@@ -4,6 +4,8 @@ import subprocess
 import time
 from pathlib import Path
 import shutil
+from colorist import Color
+
 
 errorLog = Path('errorLog.txt').touch
 
@@ -13,18 +15,18 @@ def install_package(package_name):
 	result = subprocess.run(['sudo', 'pacman', '-S', package_name, '--noconfirm'])
 
 	if result.returncode == 0:
-		print(f"✅ {package_name} installed successfully!")
+		print(f"✅ {Color.GREEN} {package_name} installed successfully!{Color.OFF}")
 	else: 
-		print(f"❌ Failed to install {package_name}")	
+		print(f"❌ {Color.RED} Failed to install {package_name}")	
 
 def install_aur_package(package_name):
 	print(f"Installing {package_name}...")
 	result = subprocess.run(['yay', '-S', package_name, '--noconfirm'])
 
 	if result.returncode == 0:
-		print(f"✅ {package_name} installed successfully!")
+		print(f"✅ {Color.GREEN} {package_name} installed successfully{Color.OFF}!")
 	else: 
-		print(f"❌ Failed to install {package_name}")	
+		print(f"❌ {Color.RED} Failed to install {package_name}")	
 
 def restore_configs():
 	home_dir = Path.home()
@@ -38,16 +40,16 @@ def restore_configs():
 			try:
 				backup = dest.with_suffix(dest.suffix + '.backup')
 				shutil.copy2(dest, backup)
-				print(f"Backed up existing {dest.name}")
+				print(f"✅ {Color.GREEN} Backed up existing {dest.name}{Color.OFF}")
 			except Exception as e:	
-				print(f"❌ Failed to backup {dest.name}: {e}")	
+				print(f"❌ {Color.RED} Failed to backup {dest.name}: {e}{Color.OFF}")	
 
 		
 		try: 
 			shutil.copy2(config_file, dest)
-			print(f"✅ Restored {config_file.name}!")
+			print(f"✅ {Color.GREEN} Restored {config_file.name}{Color.OFF}!")
 		except Exception as e:
-			print(f"❌ Failed to restore {config_file.name}: {e}")	
+			print(f"❌ {Color.RED} Failed to restore {config_file.name}: {e}{Color.OFF}")	
 		
 
 def clone_git(git_Projects):
@@ -60,9 +62,9 @@ def clone_git(git_Projects):
 	for project in git_Projects:
 		try:
 			subprocess.run(['git', 'clone', project, dest])
-			print(f"✅ {project} has been cloned successfully!")	
+			print(f"✅ {Color.GREEN} {project} has been cloned successfully{Color.OFF}!")	
 		except Exception as e: 
-			print(f"❌ Failed to install {project}: {e}")	
+			print(f"❌ {Color.RED} Failed to install {project}: {e} {Color.OFF}")	
 			
 
 
@@ -77,6 +79,10 @@ def main():
 	aur_packages = ['bat-extras', 'downgrade', 'ttf-meslo-nerd-font-powerlevel10k']
 
 	# Show what will be installed
+	print("================\n")
+	print(f"\n 📦 {Color.BLUE}PACKAGE INSTALLATION{Color.OFF}")
+	print("================\n")
+
 	print(f"\nThe following Pacman packages will be installed: \n {', '.join(pacman_packages)}")
 
 	time.sleep(2)
@@ -92,22 +98,31 @@ def main():
 		# Install if user confirms 
 	if packageResponse.lower() == 'y':
 		print("\nStarting installation...\n")
-		for package in pacman_packages:
+		pacman_length = len(pacman_packages)
+		for index, package in enumerate(pacman_packages, start=1):
+			print(f"[{index}/{pacman_length}] : {package}")
 			install_package(package)
-		print("\n✅ All packages installed")
+		print(f"\n✅ {Color.GREEN} All packages installed {Color.OFF}")
 	else: 
-		print("❌ Installation cancelled")
+		print(f"❌ {Color.RED} Installation cancelled {Color.OFF}")
 
 	# Install AUR Packages if user confirms 
 	if packageResponse.lower() == 'y':
 		print("\nStarting installation...\n")
-		for package in aur_packages:
+		aur_length = len(aur_packages)
+
+		for index, package in enumerate(aur_packages, start=1):
+			print(f"[{index}/ {aur_length}] : {package}")
 			install_package(package)
-		print("\n✅ All packages installed")
+		print(f"\n✅ {Color.GREEN} All packages installed {Color.OFF}")
 	else: 
-		print("❌ Installation cancelled")
+		print(f"❌ {Color.RED} Installation cancelled {Color.OFF}")
 
 	# Restore dotfiles to new computer
+	print("================\n")
+	print(f"\n 📁 {Color.BLUE}CONFIGURATION FILE RESTORATION{Color.OFF}")
+	print("================\n")
+
 	print("Dotfiles will now be restored...\n")
 	time.sleep(3)
 
@@ -122,14 +137,19 @@ def main():
 		print("Beginning Restoration Process...\n")
 		time.sleep(3)
 		restore_configs()
-		print("\n✅ All configs have been restored")
+		print(f"\n✅ {Color.GREEN} All configs have been restored {Color.OFF}")
 	else: 
-		print("\n❌ Restoration cancelled")
+		print(f"\n❌ {Color.RED} Restoration cancelled {Color.OFF}")
 
 	time.sleep(3)
 
 
 	# Git Projects 
+	print("================\n")
+	print(f"\n 🌐 {Color.BLUE}PACKAGE INSTALLATION{Color.OFF}")
+	print("================\n")
+
+
 	git_Projects = ['https://github.com/rstallingsiii/robofriends.git', 'https://github.com/rstallingsiii/Virtual-Assistant.git' , 'https://github.com/rstallingsiii/SpurgeonAi.git', 'https://github.com/rstallingsiii/Todo-List.git' ]
 
 	print(f"\nThe following Git Projects will be installed: \n {', '.join(git_Projects)}")
@@ -145,9 +165,9 @@ def main():
 		print("Cloning git projects...\n")
 		time.sleep(3)
 		clone_git(git_Projects)
-		print("\n✅ All packages installed")
+		print(f"\n✅ {Color.GREEN} All packages installed {Color.OFF}")
 	else: 
-		print("\n❌ Installation cancelled")
+		print(f"\n❌ {Color.RED} Installation cancelled {Color.OFF}")
 
 
 	
