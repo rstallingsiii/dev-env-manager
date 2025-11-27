@@ -5,10 +5,8 @@ A Python script to automatically set up my development environment on Arch-based
 ## What It Does
 
 Currently:
-- Installs a list of packages using pacman
+- Installs a list of packages using pacman and AUR
 - Asks for user confirmation before installing
-
-Coming soon:
 - AUR package support
 - Config file management (dotfiles)
 - Git repository cloning
@@ -54,11 +52,11 @@ This is a learning project to:
 - [x] Basic script structure
 - [x] Single package installation
 - [x] Multiple package installation
-- [ ] User confirmation
-- [ ] AUR support
-- [ ] Config file management
-- [ ] Git repo cloning
+- [x] User confirmation
+- [x] AUR support
+- [x] Config file management
+- [x] Git repo cloning
 
 ## License
 
-Personal project - do whatever you want with it.
+Personal project - Free for cloning and customization.
